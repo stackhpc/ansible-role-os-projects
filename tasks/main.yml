@@ -4,7 +4,7 @@
     ansible_python_interpreter: "{{ os_projects_venv }}/bin/python"
   when: "{{ os_projects_venv != None }}"
 
-- name: Ensure the test project exists
+- name: Ensure the project exists
   os_project:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
@@ -17,49 +17,10 @@
   with_items: "{{ os_projects }}"
   environment: "{{ os_projects_environment }}"
 
-- name: Ensure test project users exist
-  os_user:
-    auth_type: "{{ os_projects_auth_type }}"
-    auth: "{{ os_projects_admin_auth }}"
-    name: "{{ item.1.name }}"
-    password: "{{ item.1.password }}"
-    default_project: "{{ item.0.name }}"
-    domain: "{{ item.0.project_domain }}"
-    state: present
-    enabled: True
-    wait: yes
-  with_subelements:
-    - "{{ os_projects }}"
-    - users
-  environment: "{{ os_projects_environment }}"
-
-- name: Initiliase a fact containing flattened user roles
-  set_fact:
-    os_projects_user_roles: []
-
-- name: Update a fact containing flattened user roles
-  set_fact:
-    os_projects_user_roles: >
-      {{ os_projects_user_roles +
-         [{'project': item.0.name,
-           'name': item.1.name,
-           'roles': item.1.roles}] }}
-  with_subelements:
-    - "{{ os_projects }}"
-    - users
-        
-- name: Ensure test project users have required roles
-  os_user_role:
-    auth_type: "{{ os_projects_auth_type }}"
-    auth: "{{ os_projects_admin_auth }}"
-    user: "{{ item.0.name }}"
-    project: "{{ item.0.project }}"
-    role: "{{ item.1 }}"
-    state: present
-  with_subelements:
-    - "{{ os_projects_user_roles }}"
-    - roles
-  environment: "{{ os_projects_environment }}"
+- include: users.yml
+  with_items: "{{ os_projects }}"
+  loop_control:
+    loop_var: project
 
 - name: Ensure SSH keypairs are registered
   os_keypair:
