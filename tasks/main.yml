@@ -75,4 +75,4 @@
   with_subelements:
     - "{{ os_projects }}"
     - users
-  when: "{{ item.openrc_file is defined }}"
+  when: "{{ item.1.openrc_file is defined }}"
