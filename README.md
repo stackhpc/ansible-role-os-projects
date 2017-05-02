@@ -37,7 +37,7 @@ Each item should be a dict containing the following items:
   should be a dict containing the following items:
   - `name`: The name of the keypair.
   - `public_key`: The SSH public key contents. Optional.
-  - `public_key\_file`: Path to the SSH public key on the control host.
+  - `public_key_file`: Path to the SSH public key on the control host.
 - `quotas`: Dict mapping quota names to their values.
 
 Dependencies
