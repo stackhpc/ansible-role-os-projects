@@ -10,6 +10,15 @@
     domain: "{{ project.user_domain }}"
   environment: "{{ os_projects_environment }}"
 
+- name: Update the user list with the authenticating user
+  set_fact:
+    openstack_users: >
+      {{ openstack_users +
+         [{'name': os_projects_admin_auth.username, 'enabled': True}] }}
+  when:
+    - os_projects_auth_type == 'password'
+    - os_projects_admin_auth.project_name == project.name
+
 - name: Ensure project users exist
   os_user:
     auth_type: "{{ os_projects_auth_type }}"
