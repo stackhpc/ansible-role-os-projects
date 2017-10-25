@@ -32,11 +32,11 @@
     wait: yes
   with_items: "{{ project.users }}"
   when: >
-    {{ openstack_users |
-       selectattr('name', 'equalto', item.name) |
-       selectattr('enabled') |
-       list |
-       length == 0 }}
+    openstack_users |
+    selectattr('name', 'equalto', item.name) |
+    selectattr('enabled') |
+    list |
+    length == 0
   environment: "{{ os_projects_environment }}"
 
 - name: Ensure project users have required roles

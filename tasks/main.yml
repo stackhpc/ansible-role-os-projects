@@ -2,7 +2,7 @@
 - name: Set a fact to ensure Ansible uses the python interpreter in the virtualenv
   set_fact:
     ansible_python_interpreter: "{{ os_projects_venv }}/bin/python"
-  when: "{{ os_projects_venv != None }}"
+  when: os_projects_venv != None
 
 - name: Ensure the project exists
   os_project:
@@ -49,7 +49,7 @@
 - name: Set a fact to reset the Ansible python interpreter
   set_fact:
     ansible_python_interpreter: /usr/bin/python
-  when: "{{ os_projects_venv != None }}"
+  when: os_projects_venv != None
 
 # The os_quota module is not available in Ansible 2.2. It will be added in
 # Ansible 2.3, at which point we should use it here.
@@ -65,7 +65,7 @@
     --os-interface=public
     quota set {{ item.name }}
     {% for name, value in item.quotas.items() %} --{{ name | replace('_', '-') }}={{ value }}{% endfor %}
-  when: "{{ item.quotas }}"
+  when: item.quotas
   with_items: "{{ os_projects }}"
   environment: "{{ os_projects_environment }}"
 
@@ -78,4 +78,4 @@
   with_subelements:
     - "{{ os_projects }}"
     - users
-  when: "{{ item.1.openrc_file is defined }}"
+  when: item.1.openrc_file is defined
