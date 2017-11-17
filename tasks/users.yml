@@ -50,6 +50,19 @@
     - roles
   environment: "{{ os_projects_environment }}"
 
+- name: Ensure domain users have required roles
+  os_user_role:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    user: "{{ item.0.name }}"
+    domain: "{{ project.user_domain }}"
+    role: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.users }}"
+    - domain_roles
+  environment: "{{ os_projects_environment }}"
+
 - name: Ensure project users have required roles
   os_user_role:
     auth_type: "{{ os_projects_auth_type }}"
