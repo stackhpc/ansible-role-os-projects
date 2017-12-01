@@ -50,12 +50,20 @@
     - roles
   environment: "{{ os_projects_environment }}"
 
+- name: Get domain ID for the domain
+  os_keystone_domain_facts:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    name: "{{ project.user_domain }}"
+  with_subelements:
+    - "{{ project.users }}"
+
 - name: Ensure domain users have required roles
   os_user_role:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     user: "{{ item.0.name }}"
-    domain: "{{ project.user_domain }}"
+    domain: "{{ openstack_domains[0].id }}"
     role: "{{ item.1 }}"
     state: present
   with_subelements:

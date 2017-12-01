@@ -9,7 +9,7 @@
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     name: "{{ item.project_domain }}"
-    description: "{{ item.description }}"
+    description: ""
     state: present
     enabled: True
     wait: yes
