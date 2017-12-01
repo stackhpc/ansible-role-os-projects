@@ -55,8 +55,9 @@
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     name: "{{ project.user_domain }}"
-  with_subelements:
+  with_items:
     - "{{ project.users }}"
+  environment: "{{ os_projects_environment }}"
 
 - name: Ensure domain users have required roles
   os_user_role:
