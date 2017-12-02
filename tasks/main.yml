@@ -16,6 +16,8 @@
     wait: yes
   with_items: "{{ os_projects }}"
   environment: "{{ os_projects_environment }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - include: users.yml
   with_items: "{{ os_projects }}"
@@ -43,6 +45,10 @@
       project_name: "{{ item.0.name }}"
       username: "{{ item.0.users[0].name }}"
       password: "{{ item.0.users[0].password }}"
+  loop_control:
+    label:
+      project: "{{ item.0.name }}"
+      keypair: "{{ item.1.name }}"
 
 - name: Ensure quotas are set
   os_quota:
@@ -90,6 +96,8 @@
   environment: "{{ os_projects_environment }}"
   vars:
     quotas: "{{ item.quotas }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 # This variable is unset before we set it, and it does not appear to be
 # possible to unset a variable in Ansible.
@@ -117,6 +125,8 @@
     - item.quotas | default(False)
   with_items: "{{ os_projects }}"
   environment: "{{ os_projects_environment }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: Ensure openrc environment file exists
   local_action:
@@ -128,3 +138,7 @@
     - "{{ os_projects }}"
     - users
   when: item.1.openrc_file is defined
+  loop_control:
+    label:
+      project: "{{ item.0.name }}"
+      user: "{{ item.1.name }}"

@@ -38,6 +38,10 @@
     list |
     length == 0
   environment: "{{ os_projects_environment }}"
+  loop_control:
+    label:
+      project: "{{ project.name }}"
+      user: "{{ item.name }}"
 
 - name: Ensure project users have required roles
   os_user_role:
@@ -51,3 +55,8 @@
     - "{{ project.users }}"
     - roles
   environment: "{{ os_projects_environment }}"
+  loop_control:
+    label:
+      project: "{{ project.name }}"
+      user: "{{ item.0.name }}"
+      role: "{{ item.1 }}"
