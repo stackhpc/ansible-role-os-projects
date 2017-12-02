@@ -54,6 +54,7 @@
   with_subelements:
     - "{{ project.users }}"
     - roles
+    - skip_missing: True
   environment: "{{ os_projects_environment }}"
   loop_control:
     label:
