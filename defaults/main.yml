@@ -12,6 +12,12 @@ os_projects_admin_auth: {}
 os_projects_environment:
   OS_IDENTITY_API_VERSION: 3
 
+# List of OpenStack domains to create.
+# Each item should be a dict containing the following items:
+# - 'name': The name of the domain.
+# - 'description': Optional description for the domain.
+os_projects_domains: []
+
 # List of OpenStack projects to create.
 # Each item should be a dict containing the following items:
 # - 'name': The name of the project.

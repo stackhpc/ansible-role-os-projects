@@ -4,18 +4,88 @@
     ansible_python_interpreter: "{{ os_projects_venv }}/bin/python"
   when: os_projects_venv != None
 
+- name: Ensure the domain exists
+  os_keystone_domain:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description | default(omit) }}"
+    state: present
+    enabled: True
+    wait: yes
+  with_items: "{{ os_projects_domains }}"
+  environment: "{{ os_projects_environment }}"
+
+# Domains must be specified by UUID in API calls (with the exception of the
+# default domain), so build a domain name -> UUID map that allows users to pass
+# in domains by name. We might have the information already, but in case any
+# domains weren't created by the previous task, let's just grab the whole lot.
+
+- name: Gather facts about domains
+  os_keystone_domain_facts:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+  environment: "{{ os_projects_environment }}"
+
+# The openstack_domains fact seems to sometimes be a list and sometimes a dict.
+# If it's a dict, force it to be a list.
+
+- name: Fix up openstack_domains fact type
+  set_fact:
+    openstack_domains: "{{ [openstack_domains] }}"
+  when: openstack_domains is mapping
+
+- name: Initialise a fact mapping domain names to IDs
+  set_fact:
+    os_projects_domain_to_id: {}
+
+- name: Update a fact mapping domain names to IDs
+  set_fact:
+    os_projects_domain_to_id: >
+      {{ os_projects_domain_to_id | combine({item.name: item.id}) }}
+  with_items: "{{ openstack_domains }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Fail if the project's domain was not found
+  fail:
+    msg: >
+      OpenStack domain {{ item.project_domain }} for project {{ item.name }}
+      was not found.
+  when:
+    - item.project_domain not in os_projects_domain_to_id
+    - item.project_domain not in os_projects_domain_to_id.values()
+  with_items: "{{ os_projects }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Fail if the project's user domain was not found
+  fail:
+    msg: >
+      OpenStack domain {{ item.user_domain }} for project {{ item.name }}
+      was not found.
+  when:
+    - item.user_domain is defined
+    - item.user_domain not in os_projects_domain_to_id
+    - item.user_domain not in os_projects_domain_to_id.values()
+  with_items: "{{ os_projects }}"
+  loop_control:
+    label: "{{ item.name }}"
+
 - name: Ensure the project exists
   os_project:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     name: "{{ item.name }}"
     description: "{{ item.description }}"
-    domain_id: "{{ item.project_domain }}"
+    domain_id: "{{ domain_is_id | ternary(item.project_domain, os_projects_domain_to_id[item.project_domain]) }}"
     state: present
     enabled: True
     wait: yes
   with_items: "{{ os_projects }}"
   environment: "{{ os_projects_environment }}"
+  vars:
+    domain_is_id: "{{ item.project_domain in os_projects_domain_to_id.values() }}"
   loop_control:
     label: "{{ item.name }}"
 

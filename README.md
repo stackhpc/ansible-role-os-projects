@@ -21,6 +21,11 @@ the `auth_type` argument of `os_*` Ansible modules.
 `os_projects_auth` is a dict containing authentication information
 compatible with the `auth` argument of `os_*` Ansible modules.
 
+`os_projects_domains` is a list of OpenStack domains to create.
+Each item should be a dict containing the following items:
+- `name`: The name of the domain.
+- `description`: Optional description for the domain.
+
 `os_projects` is a list of projects to register.
 Each item should be a dict containing the following items:
 - `name`: The name of the project.
