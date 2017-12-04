@@ -36,7 +36,9 @@ Each item should be a dict containing the following items:
   containing the following items:
   - `name`: The name of the user.
   - `password`: The user's password.
-  - `roles`: Optional list of roles to assign to the user.
+  - `roles`: Optional list of roles to assign to the user in the project.
+  - `domain_roles`: Optional list of roles to assign to the user in the user
+    domain.
   - `openrc_file`: Path to an environment file to create.
 - `keypairs`: Optional list of SSH key pairs to register with Nova. Each key
   pair should be a dict containing the following items:
