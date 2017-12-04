@@ -39,7 +39,7 @@
     length == 0
   environment: "{{ os_projects_environment }}"
 
-- name: Ensure roles exist
+- name: Ensure project roles exist
   os_keystone_role:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
@@ -48,6 +48,17 @@
   with_subelements:
     - "{{ project.users }}"
     - roles
+  environment: "{{ os_projects_environment }}"
+
+- name: Ensure domain roles exist
+  os_keystone_role:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    name: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.users }}"
+    - domain_roles
   environment: "{{ os_projects_environment }}"
 
 - name: Get domain ID for the domain
