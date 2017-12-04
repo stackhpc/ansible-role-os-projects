@@ -1,9 +1,9 @@
 ---
 galaxy_info:
-  author: Mark Goddard
+  author: Darryl Weaver
   description: >
-    Role to register projects, users and related resources in OpenStack
-  company: StackHPC Ltd
+    Role to register domains, projects, users and related resources in OpenStack
+  company: Verne Global
   license: Apache2
   min_ansible_version: 2.0
   platforms:
