@@ -39,6 +39,50 @@
     length == 0
   environment: "{{ os_projects_environment }}"
 
+- name: Ensure project roles exist
+  os_keystone_role:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    name: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.users }}"
+    - roles
+  environment: "{{ os_projects_environment }}"
+
+- name: Ensure domain roles exist
+  os_keystone_role:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    name: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.users }}"
+    - domain_roles
+  environment: "{{ os_projects_environment }}"
+
+- name: Get domain ID for the domain
+  os_keystone_domain_facts:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    name: "{{ project.user_domain }}"
+  with_items:
+    - "{{ project.users }}"
+  environment: "{{ os_projects_environment }}"
+
+- name: Ensure domain users have required roles
+  os_user_role:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    user: "{{ item.0.name }}"
+    domain: "{{ openstack_domains[0].id }}"
+    role: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.users }}"
+    - domain_roles
+  environment: "{{ os_projects_environment }}"
+
 - name: Ensure project users have required roles
   os_user_role:
     auth_type: "{{ os_projects_auth_type }}"

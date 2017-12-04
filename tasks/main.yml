@@ -4,6 +4,18 @@
     ansible_python_interpreter: "{{ os_projects_venv }}/bin/python"
   when: os_projects_venv != None
 
+- name: Ensure the domain for project exists
+  os_keystone_domain:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    name: "{{ item.project_domain }}"
+    description: ""
+    state: present
+    enabled: True
+    wait: yes
+  with_items: "{{ os_projects }}"
+  environment: "{{ os_projects_environment }}"
+
 - name: Ensure the project exists
   os_project:
     auth_type: "{{ os_projects_auth_type }}"
