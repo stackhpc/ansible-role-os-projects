@@ -89,6 +89,36 @@
   loop_control:
     label: "{{ item.name }}"
 
+- name: Ensure the role exists
+  os_keystone_role:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    name: "{{ item }}"
+  with_items: "{{ roles }}"
+  environment: "{{ os_projects_environment }}"
+  vars:
+    users: >
+      {{ os_projects |
+         selectattr('users', 'defined') |
+         map(attribute='users') |
+         sum(start=[]) |
+         list }}
+    project_roles: >
+      {{ users |
+         selectattr('roles', 'defined') |
+         map(attribute='roles') |
+         sum(start=[]) |
+         unique |
+         list }}
+    domain_roles: >
+      {{ users |
+         selectattr('domain_roles', 'defined') |
+         map(attribute='domain_roles') |
+         sum(start=[]) |
+         unique |
+         list }}
+    roles: "{{ project_roles + domain_roles }}"
+
 - include: users.yml
   with_items: "{{ os_projects }}"
   when: project.users is defined
