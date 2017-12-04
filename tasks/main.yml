@@ -44,6 +44,53 @@
       username: "{{ item.0.users[0].name }}"
       password: "{{ item.0.users[0].password }}"
 
+- name: Ensure quotas are set
+  os_quota:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    name: "{{ item.name }}"
+    state: present
+    # Quotas:
+    backup_gigabytes: "{{ quotas.backup_gigabytes | default(omit) }}"
+    backups: "{{ quotas.backups | default(omit) }}"
+    cores: "{{ quotas.cores | default(omit) }}"
+    fixed_ips: "{{ quotas.fixed_ips | default(omit) }}"
+    floating_ips: "{{ quotas.floating_ips | default(omit) }}"
+    floatingip: "{{ quotas.floatingip | default(omit) }}"
+    gigabytes: "{{ quotas.gigabytes | default(omit) }}"
+    gigabytes_lvm: "{{ quotas.gigabytes_lvm | default(omit) }}"
+    injected_file_size: "{{ quotas.injected_file_size | default(omit) }}"
+    injected_files: "{{ quotas.injected_files | default(omit) }}"
+    injected_path_size: "{{ quotas.injected_path_size | default(omit) }}"
+    instances: "{{ quotas.instances | default(omit) }}"
+    key_pairs: "{{ quotas.key_pairs | default(omit) }}"
+    loadbalancer: "{{ quotas.loadbalancer | default(omit) }}"
+    network: "{{ quotas.network | default(omit) }}"
+    per_volume_gigabytes: "{{ quotas.per_volume_gigabytes | default(omit) }}"
+    pool: "{{ quotas.pool | default(omit) }}"
+    port: "{{ quotas.port | default(omit) }}"
+    properties: "{{ quotas.properties | default(omit) }}"
+    ram: "{{ quotas.ram | default(omit) }}"
+    rbac_policy: "{{ quotas.rbac_policy | default(omit) }}"
+    router: "{{ quotas.router | default(omit) }}"
+    security_group: "{{ quotas.security_group | default(omit) }}"
+    security_group_rule: "{{ quotas.security_group_rule | default(omit) }}"
+    server_group_members: "{{ quotas.server_group_members | default(omit) }}"
+    server_groups: "{{ quotas.server_groups | default(omit) }}"
+    snapshots: "{{ quotas.snapshots | default(omit) }}"
+    snapshots_lvm: "{{ quotas.snapshots_lvm | default(omit) }}"
+    subnet: "{{ quotas.subnet | default(omit) }}"
+    subnetpool: "{{ quotas.subnetpool | default(omit) }}"
+    volumes: "{{ quotas.volumes | default(omit) }}"
+    volumes_lvm: "{{ quotas.volumes_lvm | default(omit) }}"
+  when:
+    - ansible_version | version_compare('2.3', 'ge')
+    - item.quotas | default(False)
+  with_items: "{{ os_projects }}"
+  environment: "{{ os_projects_environment }}"
+  vars:
+    quotas: "{{ item.quotas }}"
+
 # This variable is unset before we set it, and it does not appear to be
 # possible to unset a variable in Ansible.
 - name: Set a fact to reset the Ansible python interpreter
@@ -65,7 +112,9 @@
     --os-interface=public
     quota set {{ item.name }}
     {% for name, value in item.quotas.items() %} --{{ name | replace('_', '-') }}={{ value }}{% endfor %}
-  when: item.quotas
+  when:
+    - ansible_version | version_compare('2.3', 'lt')
+    - item.quotas | default(False)
   with_items: "{{ os_projects }}"
   environment: "{{ os_projects_environment }}"
 
