@@ -21,24 +21,31 @@ the `auth_type` argument of `os_*` Ansible modules.
 `os_projects_auth` is a dict containing authentication information
 compatible with the `auth` argument of `os_*` Ansible modules.
 
+`os_projects_domains` is a list of OpenStack domains to create.
+Each item should be a dict containing the following items:
+- `name`: The name of the domain.
+- `description`: Optional description for the domain.
+
 `os_projects` is a list of projects to register.
 Each item should be a dict containing the following items:
 - `name`: The name of the project.
 - `description`: A description of the project.
 - `project_domain`: The domain in which to register the project.
 - `user_domain`: The domain in which to register users.
-- `users`: List of users to register. Each user should be a dict containing
-  the following items:
+- `users`: Optional list of users to register. Each user should be a dict
+  containing the following items:
   - `name`: The name of the user.
   - `password`: The user's password.
-  - `roles`: A list of roles to assign to the user.
+  - `roles`: Optional list of roles to assign to the user in the project.
+  - `domain_roles`: Optional list of roles to assign to the user in the user
+    domain.
   - `openrc_file`: Path to an environment file to create.
-- `keypairs`: List of SSH key pairs to register with Nova. Each key pair
-  should be a dict containing the following items:
+- `keypairs`: Optional list of SSH key pairs to register with Nova. Each key
+  pair should be a dict containing the following items:
   - `name`: The name of the keypair.
   - `public_key`: The SSH public key contents. Optional.
   - `public_key_file`: Path to the SSH public key on the control host.
-- `quotas`: Dict mapping quota names to their values.
+- `quotas`: Optional dict mapping quota names to their values.
 
 Dependencies
 ------------

@@ -26,7 +26,7 @@
     name: "{{ item.name }}"
     password: "{{ item.password }}"
     default_project: "{{ project.name }}"
-    domain: "{{ project.user_domain }}"
+    domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
     state: present
     enabled: True
     wait: yes
@@ -38,8 +38,14 @@
     list |
     length == 0
   environment: "{{ os_projects_environment }}"
+  vars:
+    domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
+  loop_control:
+    label:
+      project: "{{ project.name }}"
+      user: "{{ item.name }}"
 
-- name: Ensure project users have required roles
+- name: Ensure users have required project roles
   os_user_role:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
@@ -50,4 +56,31 @@
   with_subelements:
     - "{{ project.users }}"
     - roles
+    - skip_missing: True
   environment: "{{ os_projects_environment }}"
+  loop_control:
+    label:
+      project: "{{ project.name }}"
+      user: "{{ item.0.name }}"
+      role: "{{ item.1 }}"
+
+- name: Ensure users have required domain roles
+  os_user_role:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    user: "{{ item.0.name }}"
+    domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+    role: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.users }}"
+    - domain_roles
+    - skip_missing: True
+  environment: "{{ os_projects_environment }}"
+  vars:
+    domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
+  loop_control:
+    label:
+      domain: "{{ project.user_domain }}"
+      user: "{{ item.0.name }}"
+      role: "{{ item.1 }}"
