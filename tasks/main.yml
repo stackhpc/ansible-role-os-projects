@@ -21,19 +21,22 @@
 # in domains by name. We might have the information already, but in case any
 # domains weren't created by the previous task, let's just grab the whole lot.
 
-- name: Gather facts about domains
-  os_keystone_domain_facts:
-    auth_type: "{{ os_projects_auth_type }}"
-    auth: "{{ os_projects_admin_auth }}"
+# NOTE: We can't use the os_keystone_domain_facts module because ansible
+# sanitises variables matching anything found in the auth parameter of os_*
+# modules. This will include the name of the domain used to authenticate
+# against. Use the openstack CLI directly instead.
+
+- name: List OpenStack domains
+  command: >
+    openstack
+    {% for auth_name, auth_value in os_projects_admin_auth.items() %}
+    --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
+    {% endfor %}
+    --os-interface=public
+    domain list -f json -c Name -c ID
+  changed_when: False
   environment: "{{ os_projects_environment }}"
-
-# The openstack_domains fact seems to sometimes be a list and sometimes a dict.
-# If it's a dict, force it to be a list.
-
-- name: Fix up openstack_domains fact type
-  set_fact:
-    openstack_domains: "{{ [openstack_domains] }}"
-  when: openstack_domains is mapping
+  register: domain_list
 
 - name: Initialise a fact mapping domain names to IDs
   set_fact:
@@ -42,10 +45,10 @@
 - name: Update a fact mapping domain names to IDs
   set_fact:
     os_projects_domain_to_id: >
-      {{ os_projects_domain_to_id | combine({item.name: item.id}) }}
-  with_items: "{{ openstack_domains }}"
+      {{ os_projects_domain_to_id | combine({item.Name: item.ID}) }}
+  with_items: "{{ domain_list.stdout | from_json }}"
   loop_control:
-    label: "{{ item.name }}"
+    label: "{{ item.Name }}"
 
 - name: Fail if the project's domain was not found
   fail:
