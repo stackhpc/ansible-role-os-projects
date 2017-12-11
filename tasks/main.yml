@@ -1,4 +1,8 @@
 ---
+- name: Set a fact about the Ansible python interpreter
+  set_fact:
+    old_ansible_python_interpreter: "{{ ansible_python_interpreter | default('/usr/bin/python') }}"
+
 - name: Set a fact to ensure Ansible uses the python interpreter in the virtualenv
   set_fact:
     ansible_python_interpreter: "{{ os_projects_venv }}/bin/python"
@@ -208,7 +212,7 @@
 # possible to unset a variable in Ansible.
 - name: Set a fact to reset the Ansible python interpreter
   set_fact:
-    ansible_python_interpreter: /usr/bin/python
+    ansible_python_interpreter: "{{ old_ansible_python_interpreter }}"
   when: os_projects_venv != None
 
 # The os_quota module is not available in Ansible 2.2. It will be added in
