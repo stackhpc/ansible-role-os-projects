@@ -35,6 +35,8 @@ Each item should be a dict containing the following items:
 - `users`: Optional list of users to register. Each user should be a dict
   containing the following items:
   - `name`: The name of the user.
+  - `description`: User name/description (optional)
+  - `email`: User email address (optional)
   - `password`: The user's password.
   - `roles`: Optional list of roles to assign to the user in the project.
   - `domain_roles`: Optional list of roles to assign to the user in the user

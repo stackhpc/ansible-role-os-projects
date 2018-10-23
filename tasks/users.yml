@@ -24,6 +24,8 @@
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     name: "{{ item.name }}"
+    description: "{{ item.description | default(omit) }}"
+    email: "{{ item.email | default(omit) }}"
     password: "{{ item.password }}"
     default_project: "{{ project.name }}"
     domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
