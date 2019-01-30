@@ -7,6 +7,7 @@
   os_user_facts:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
     domain: "{{ project.user_domain }}"
   environment: "{{ os_projects_environment }}"
 
@@ -23,6 +24,7 @@
   os_user:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
     name: "{{ item.name }}"
     password: "{{ item.password }}"
     default_project: "{{ project.name }}"
@@ -49,6 +51,7 @@
   os_user_role:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
     user: "{{ item.0.name }}"
     project: "{{ project.name }}"
     role: "{{ item.1 }}"
@@ -68,6 +71,7 @@
   os_user_role:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
     user: "{{ item.0.name }}"
     domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
     role: "{{ item.1 }}"

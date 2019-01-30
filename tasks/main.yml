@@ -12,6 +12,7 @@
   os_keystone_domain:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
     name: "{{ item.name }}"
     description: "{{ item.description | default(omit) }}"
     state: present
@@ -37,6 +38,9 @@
     {% for auth_name, auth_value in os_projects_admin_auth.items() %}
     --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
     {% endfor %}
+    {% if os_projects_cacert is defined %}
+    --os-cacert='{{ os_projects_cacert }}'
+    {% endif %}
     --os-interface=public
     domain list -f json -c Name -c ID
   changed_when: False
@@ -84,6 +88,7 @@
   os_project:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
     name: "{{ item.name }}"
     description: "{{ item.description }}"
     domain_id: "{{ domain_is_id | ternary(item.project_domain, os_projects_domain_to_id[item.project_domain]) }}"
@@ -101,6 +106,7 @@
   os_keystone_role:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
     name: "{{ item }}"
   with_items: "{{ roles }}"
   environment: "{{ os_projects_environment }}"
@@ -137,6 +143,7 @@
   os_keypair:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth | combine(os_projects_user_auth_overrides) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
     name: "{{ item.1.name }}"
     public_key_file: "{{ item.1.public_key_file | default(omit) }}"
     public_key: "{{ item.1.public_key | default(omit) }}"
@@ -164,6 +171,7 @@
   os_quota:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
     name: "{{ item.name }}"
     state: present
     # Quotas:
@@ -227,6 +235,9 @@
     {% for auth_name, auth_value in os_projects_admin_auth.items() %}
     --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
     {% endfor %}
+    {% if os_projects_cacert is defined %}
+    --os-cacert='{{ os_projects_cacert }}'
+    {% endif %}
     --os-interface=public
     quota set {{ item.name }}
     {% for name, value in item.quotas.items() %} --{{ name | replace('_', '-') }}={{ value }}{% endfor %}
