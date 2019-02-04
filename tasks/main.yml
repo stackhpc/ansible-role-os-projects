@@ -250,8 +250,7 @@
     label: "{{ item.name }}"
 
 - name: Ensure openrc environment file exists
-  local_action:
-    module: template
+  template:
     src: openrc.j2
     dest: "{{ item.1.openrc_file }}"
     mode: 0600
@@ -264,3 +263,4 @@
     label:
       project: "{{ item.0.name }}"
       user: "{{ item.1.name }}"
+  delegate_to: localhost
