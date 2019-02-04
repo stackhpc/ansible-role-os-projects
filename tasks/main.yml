@@ -13,6 +13,7 @@
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
     name: "{{ item.name }}"
     description: "{{ item.description | default(omit) }}"
     state: present
@@ -40,6 +41,9 @@
     {% endfor %}
     {% if os_projects_cacert is defined %}
     --os-cacert='{{ os_projects_cacert }}'
+    {% endif %}
+    {% if os_projects_cloud is defined %}
+    --os-cloud='{{ os_projects_cloud }}'
     {% endif %}
     --os-interface=public
     domain list -f json -c Name -c ID
@@ -89,6 +93,7 @@
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
     name: "{{ item.name }}"
     description: "{{ item.description }}"
     domain_id: "{{ domain_is_id | ternary(item.project_domain, os_projects_domain_to_id[item.project_domain]) }}"
@@ -107,6 +112,7 @@
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
     name: "{{ item }}"
   with_items: "{{ roles }}"
   environment: "{{ os_projects_environment }}"
@@ -144,6 +150,7 @@
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth | combine(os_projects_user_auth_overrides) }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
     name: "{{ item.1.name }}"
     public_key_file: "{{ item.1.public_key_file | default(omit) }}"
     public_key: "{{ item.1.public_key | default(omit) }}"
@@ -172,6 +179,7 @@
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
     name: "{{ item.name }}"
     state: present
     # Quotas:
@@ -237,6 +245,9 @@
     {% endfor %}
     {% if os_projects_cacert is defined %}
     --os-cacert='{{ os_projects_cacert }}'
+    {% endif %}
+    {% if os_projects_cloud is defined %}
+    --os-cloud='{{ os_projects_cloud }}'
     {% endif %}
     --os-interface=public
     quota set {{ item.name }}

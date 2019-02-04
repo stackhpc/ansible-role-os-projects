@@ -23,6 +23,8 @@ compatible with the `auth` argument of `os_*` Ansible modules.
 
 `os_projects_cacert` is an optional path to a CA certificate bundle.
 
+`os_projects_cloud` is an optional name of a cloud in `clouds.yaml`.
+
 `os_projects_domains` is a list of OpenStack domains to create.
 Each item should be a dict containing the following items:
 - `name`: The name of the domain.

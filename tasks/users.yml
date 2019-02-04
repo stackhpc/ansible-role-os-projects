@@ -8,6 +8,7 @@
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
     domain: "{{ project.user_domain }}"
   environment: "{{ os_projects_environment }}"
 
@@ -18,13 +19,14 @@
          [{'name': os_projects_admin_auth.username, 'enabled': True}] }}
   when:
     - os_projects_auth_type == 'password'
-    - os_projects_admin_auth.project_name == project.name
+    - os_projects_admin_auth.get('project_name') == project.name
 
 - name: Ensure project users exist
   os_user:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
     name: "{{ item.name }}"
     description: "{{ item.description | default(omit) }}"
     email: "{{ item.email | default(omit) }}"
@@ -54,6 +56,7 @@
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
     user: "{{ item.0.name }}"
     project: "{{ project.name }}"
     role: "{{ item.1 }}"
@@ -74,6 +77,7 @@
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
     user: "{{ item.0.name }}"
     domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
     role: "{{ item.1 }}"
