@@ -34,7 +34,7 @@
 
 - name: List OpenStack domains
   shell: >
-    source {{ os_projects_venv }}/bin/activate &&
+    . {{ os_projects_venv }}/bin/activate &&
     openstack
     {% for auth_name, auth_value in os_projects_admin_auth.items() %}
     --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
@@ -238,7 +238,7 @@
 # modules and we currently provide no means to override it.
 - name: Ensure quotas are set
   shell: >
-    source {{ os_projects_venv }}/bin/activate &&
+    . {{ os_projects_venv }}/bin/activate &&
     openstack
     {% for auth_name, auth_value in os_projects_admin_auth.items() %}
     --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
