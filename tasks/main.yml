@@ -216,7 +216,7 @@
     volumes: "{{ quotas.volumes | default(omit) }}"
     volumes_lvm: "{{ quotas.volumes_lvm | default(omit) }}"
   when:
-    - ansible_version | version_compare('2.3', 'ge')
+    - os_projects_use_os_quota | bool
     - item.quotas is defined
   with_items: "{{ os_projects }}"
   environment: "{{ os_projects_environment }}"
@@ -253,7 +253,7 @@
     quota set {{ item.name }}
     {% for name, value in item.quotas.items() %} --{{ name | replace('_', '-') }}={{ value }}{% endfor %}
   when:
-    - ansible_version | version_compare('2.3', 'lt')
+    - not os_projects_use_os_quota | bool
     - item.quotas is defined
   with_items: "{{ os_projects }}"
   environment: "{{ os_projects_environment }}"
