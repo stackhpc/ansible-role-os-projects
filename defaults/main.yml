@@ -39,3 +39,8 @@ os_projects_domains: []
 #   - 'public_key_file': Path to the SSH public key on the control host.
 # 'quotas': Optional dict mapping quota names to their values.
 os_projects: []
+
+# Whether to use the os_quota module to define quotas. In existing versions of
+# Ansible this can fail if there is no Cinder endpoint. Set this to true to
+# use the os_quota module rather than the openstack CLI to set quotas.
+os_projects_use_os_quota: false
