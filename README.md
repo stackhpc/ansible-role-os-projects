@@ -62,8 +62,8 @@ is passed through to the role dependencies.
 Dependencies
 ------------
 
-This role depends on the `stackhpc.os-shade` and `stackhpc.os-openstackclient`
-roles.
+This role depends on the `stackhpc.os_openstacksdk` and
+`stackhpc.os-openstackclient` roles.
 
 Example Playbook
 ----------------
