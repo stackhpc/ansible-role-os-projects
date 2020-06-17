@@ -17,8 +17,8 @@ galaxy_info:
     - openstack
 
 dependencies:
-  - role: stackhpc.os-shade
-    os_shade_venv: "{{ os_projects_venv }}"
+  - role: stackhpc.os_openstacksdk
+    os_openstacksdk_venv: "{{ os_projects_venv }}"
 
   - role: stackhpc.os-openstackclient
     os_openstackclient_venv: "{{ os_projects_venv }}"
