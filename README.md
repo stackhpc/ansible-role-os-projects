@@ -56,6 +56,9 @@ Each item should be a dict containing the following items:
   - `public_key_file`: Path to the SSH public key on the control host.
 - `quotas`: Optional dict mapping quota names to their values.
 
+`os_projects_upper_constraints` is a path to an upper constraints file which
+is passed through to the role dependencies.
+
 Dependencies
 ------------
 
@@ -74,6 +77,7 @@ resources.
       roles:
         - role: stackhpc.os-projects
           os_projects_venv: "~/os-projects-venv"
+          os_projects_upper_constraints: "https://opendev.org/openstack/requirements/raw/branch/stable/stein/upper-constraints.txt"
           os_projects_auth_type: "password"
           os_projects_auth:
             project_name: <keystone project>
