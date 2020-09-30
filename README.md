@@ -37,6 +37,10 @@ Each item should be a dict containing the following items:
 Each item should be a dict containing the following items:
 - `name`: The name of the project.
 - `description`: A description of the project.
+- `groups`: Optional list of groups to register. Each group should be a dict
+  containing the following items:
+  - `name`: The name of the group
+  - `description`: Group name/description (optional)
 - `project_domain`: The domain in which to register the project.
 - `user_domain`: The domain in which to register users.
 - `users`: Optional list of users to register. Each user should be a dict
