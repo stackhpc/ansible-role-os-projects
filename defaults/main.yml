@@ -52,4 +52,4 @@ os_projects_use_os_quota: "{{ ansible_version.full is version('2.8.3', '>=') }}"
 
 # Use Train upper constraints when running with Python 2, to avoid
 # incompatibility with newer OSC releases.
-os_projects_upper_constraints: "{% if ansible_python.version.major == '2' %}https://releases.openstack.org/constraints/upper/train{% endif %}"
+os_projects_upper_constraints: "{% if ansible_python.version.major == 2 %}https://releases.openstack.org/constraints/upper/train{% endif %}"
