@@ -15,8 +15,10 @@
   register: os_user_facts_result
 
 - name: Ensure openstack_users is present
-  # Workaround for os_user_facts not setting the openstack_users fact, See:
-  # https://github.com/stackhpc/ansible-role-os-projects/issues/29
+  # os_user_facts has been renamed to os_user_info in ansible>=2.10. 
+  # The module now returns the query result instead of setting a fact.
+  # This exists for backwards compatability with previous ansible releases, 
+  # see: https://github.com/stackhpc/ansible-role-os-projects/issues/29
   set_fact:
     openstack_users: "{{ os_user_facts_results.openstack_users | default([]) }}"
   when:
