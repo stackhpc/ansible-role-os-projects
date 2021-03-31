@@ -12,6 +12,17 @@
     interface: "{{ os_projects_interface | default(omit, true) }}"
     domain: "{{ project.user_domain }}"
   environment: "{{ os_projects_environment }}"
+  register: os_user_facts_result
+
+- name: Ensure openstack_users is present
+  # os_user_facts has been renamed to os_user_info in ansible>=2.10. 
+  # The module now returns the query result instead of setting a fact.
+  # This exists for backwards compatability with previous ansible releases, 
+  # see: https://github.com/stackhpc/ansible-role-os-projects/issues/29
+  set_fact:
+    openstack_users: "{{ os_user_facts_results.openstack_users | default([]) }}"
+  when:
+    - openstack_users is undefined
 
 - name: Update the user list with the authenticating user
   set_fact:
