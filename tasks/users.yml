@@ -12,6 +12,15 @@
     interface: "{{ os_projects_interface | default(omit, true) }}"
     domain: "{{ project.user_domain }}"
   environment: "{{ os_projects_environment }}"
+  register: os_user_facts_result
+
+- name: Ensure openstack_users is present
+  # Workaround for os_user_facts not setting the openstack_users fact, See:
+  # https://github.com/stackhpc/ansible-role-os-projects/issues/29
+  set_fact:
+    openstack_users: "{{ os_user_facts_results.openstack_users | default([]) }}"
+  when:
+    - openstack_users is undefined
 
 - name: Update the user list with the authenticating user
   set_fact:
