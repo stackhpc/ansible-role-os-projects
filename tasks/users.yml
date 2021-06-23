@@ -56,7 +56,6 @@
     selectattr('enabled') |
     list |
     length == 0
-  environment: "{{ os_projects_environment }}"
   vars:
     domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
   loop_control:
@@ -79,7 +78,6 @@
     - "{{ project.users }}"
     - roles
     - skip_missing: True
-  environment: "{{ os_projects_environment }}"
   loop_control:
     label:
       project: "{{ project.name }}"
@@ -101,7 +99,6 @@
     - "{{ project.users }}"
     - domain_roles
     - skip_missing: True
-  environment: "{{ os_projects_environment }}"
   vars:
     domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
   loop_control:
