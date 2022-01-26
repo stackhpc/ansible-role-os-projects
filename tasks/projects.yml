@@ -123,6 +123,11 @@
     {% if item.parent is defined %}
     --parent '{{ item.parent }}'
     {% endif %}
+    {% if item.tags is defined %}
+    {% for tag in item.tags %}
+    --tag '{{ tag }}'
+    {% endfor %}
+    {% endif %}
   with_items: "{{ os_projects }}"
   when: item.name not in projects_list.stdout_lines
   loop_control:
