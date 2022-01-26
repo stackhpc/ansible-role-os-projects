@@ -78,7 +78,57 @@
   loop_control:
     label: "{{ item.name }}"
 
+# NOTE(priteau): The following two tasks can be removed when the
+# openstack.cloud.project Ansible module support defining a parent (os_project
+# will need to be replaced by openstack.cloud.project).
+- name: List OpenStack projects
+  shell: >
+    . {{ os_projects_venv }}/bin/activate &&
+    openstack
+    {% for auth_name, auth_value in os_projects_admin_auth.items() %}
+    --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
+    {% endfor %}
+    {% if os_projects_cacert is defined %}
+    --os-cacert='{{ os_projects_cacert }}'
+    {% endif %}
+    {% if os_projects_cloud is defined %}
+    --os-cloud='{{ os_projects_cloud }}'
+    {% endif %}
+    --os-interface={{ os_projects_interface | default('public', true) }}
+    project list -f value -c Name
+  changed_when: False
+  register: projects_list
+
 - name: Ensure the project exists
+  shell: >
+    . {{ os_projects_venv }}/bin/activate &&
+    openstack
+    {% for auth_name, auth_value in os_projects_admin_auth.items() %}
+    --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
+    {% endfor %}
+    {% if os_projects_cacert is defined %}
+    --os-cacert='{{ os_projects_cacert }}'
+    {% endif %}
+    {% if os_projects_cloud is defined %}
+    --os-cloud='{{ os_projects_cloud }}'
+    {% endif %}
+    --os-interface={{ os_projects_interface | default('public', true) }}
+    project create {{ item.name }}
+    {% if item.description is defined %}
+    --description '{{ item.description }}'
+    {% endif %}
+    {% if item.project_domain is defined %}
+    --domain '{{ item.project_domain }}'
+    {% endif %}
+    {% if item.parent is defined %}
+    --parent '{{ item.parent }}'
+    {% endif %}
+  with_items: "{{ os_projects }}"
+  when: item.name not in projects_list.stdout_lines
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Ensure project information is up to date
   os_project:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
