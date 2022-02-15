@@ -6,7 +6,7 @@ galaxy_info:
     Role to register projects, users and related resources in OpenStack
   company: StackHPC Ltd
   license: Apache2
-  min_ansible_version: 2.0
+  min_ansible_version: 2.9
   platforms:
     - name: EL
       versions:

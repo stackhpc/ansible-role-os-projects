@@ -7,7 +7,8 @@ OpenStack using the os\_\* modules.
 Requirements
 ------------
 
-The OpenStack keystone API should be accessible from the target host.
+- Ansible >=2.9
+- The OpenStack keystone API should be accessible from the target host.
 
 Role Variables
 --------------
@@ -64,7 +65,7 @@ Dependencies
 ------------
 
 This role depends on the `stackhpc.os_openstacksdk` and
-`stackhpc.os-openstackclient` roles.
+`stackhpc.os-openstackclient` roles, plus `openstack.cloud` collection.
 
 Example Playbook
 ----------------
@@ -101,7 +102,7 @@ resources.
                   public_key_file: /path/to/key
               quotas:
                 ram: -1
-              
+
 Author Information
 ------------------
 
