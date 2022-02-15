@@ -257,7 +257,6 @@
     volumes: "{{ quotas.volumes | default(omit) }}"
     volumes_lvm: "{{ quotas.volumes_lvm | default(omit) }}"
   when:
-    - os_projects_use_os_quota | bool
     - item.quotas is defined
   with_items: "{{ os_projects }}"
   vars:

@@ -8,32 +8,6 @@
     ansible_python_interpreter: "{{ os_projects_venv ~ '/bin/python' if os_projects_venv != None else old_ansible_python_interpreter }}"
   environment: "{{ os_projects_environment }}"
 
-# The os_quota module is not available in Ansible 2.2. It will be added in
-# Ansible 2.3, at which point we should use it here.
-- name: Ensure quotas are set
-  shell: >
-    . {{ os_projects_venv }}/bin/activate &&
-    openstack
-    {% for auth_name, auth_value in os_projects_admin_auth.items() %}
-    --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
-    {% endfor %}
-    {% if os_projects_cacert is defined %}
-    --os-cacert='{{ os_projects_cacert }}'
-    {% endif %}
-    {% if os_projects_cloud is defined %}
-    --os-cloud='{{ os_projects_cloud }}'
-    {% endif %}
-    --os-interface={{ os_projects_interface | default('public', true) }}
-    quota set {{ item.name }}
-    {% for name, value in item.quotas.items() %} --{{ name | replace('_', '-') }}={{ value }}{% endfor %}
-  when:
-    - not os_projects_use_os_quota | bool
-    - item.quotas is defined
-  with_items: "{{ os_projects }}"
-  environment: "{{ os_projects_environment }}"
-  loop_control:
-    label: "{{ item.name }}"
-
 - name: Ensure openrc environment file exists
   template:
     src: openrc.j2
