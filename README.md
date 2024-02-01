@@ -1,3 +1,9 @@
+# NOTE:
+
+This repository is no longer maintained - role has been moved to [Ansible
+collection](https://docs.ansible.com/ansible/latest/collections_guide/index.html)
+now ➡️ https://github.com/stackhpc/ansible-collection-openstack
+
 OpenStack Projects
 ==================
 
